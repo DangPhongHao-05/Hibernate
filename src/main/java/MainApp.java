@@ -18,6 +18,7 @@ public class MainApp {
     private static JTextField titleInput;
     private static JTextArea bodyInput;
     private static JPanel feedPanel; // Thay JTextArea bằng JPanel để chứa các khối bài viết
+    private static JPanel followPanel;
 
     public static void main(String[] args) {
         System.out.println("Đang khởi tạo cấu hình Hibernate...");
@@ -28,126 +29,122 @@ public class MainApp {
         });
     }
 
-    // MÀN HÌNH ĐĂNG NHẬP
     private static void showLoginScreen() {
-        JFrame loginFrame = new JFrame("Đăng nhập - Mạng Xã Hội");
-        loginFrame.setSize(400, 300);
-        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JFrame loginFrame = new JFrame("Login");
+        loginFrame.setSize(800, 450);
         loginFrame.setLocationRelativeTo(null);
-        loginFrame.setLayout(new BorderLayout());
+        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        loginFrame.setLayout(new GridLayout(1,2));
 
-        JPanel mainPanel = new JPanel(new GridLayout(4, 1, 0, 15));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+        // ===== BÊN TRÁI (ẢNH / LOGO) =====
+        JPanel leftPanel = new JPanel();
+        leftPanel.setBackground(new Color(24,119,242));
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
-        // TIÊU ĐỀ
-        JPanel panelTitle = new JPanel();
-        JLabel labelDangNhap = new JLabel("ĐĂNG NHẬP");
-        labelDangNhap.setFont(new Font("Arial", Font.BOLD, 24));
-        labelDangNhap.setForeground(new Color(0, 102, 204));
-        panelTitle.add(labelDangNhap);
+        JLabel icon = new JLabel("SOCIAL");
+        icon.setFont(new Font("Arial", Font.BOLD, 40));
+        icon.setForeground(Color.WHITE);
+        icon.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // TÀI KHOẢN & MẬT KHẨU (SỬ DỤNG PLACEHOLDER)
-        JPanel panelInputs = new JPanel(new GridLayout(2, 1, 0, 8));
+        JLabel sub = new JLabel("Connect with everyone");
+        sub.setFont(new Font("Arial", Font.PLAIN, 16));
+        sub.setForeground(Color.WHITE);
+        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 1. Khởi tạo ô Tài khoản có sẵn chữ mờ
-        JTextField txtUsername = new JTextField("Tài khoản");
-        txtUsername.setForeground(Color.GRAY); // Chữ màu xám mờ
-        txtUsername.setFont(new Font("Arial", Font.PLAIN, 14));
+        leftPanel.add(Box.createVerticalGlue());
+        leftPanel.add(icon);
+        leftPanel.add(Box.createVerticalStrut(10));
+        leftPanel.add(sub);
+        leftPanel.add(Box.createVerticalGlue());
 
-        // Thêm sự kiện click chuột cho ô Tài khoản
-        txtUsername.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                // Khi click vào, nếu đang là chữ "Tài khoản" thì xóa trắng đi để gõ
-                if (txtUsername.getText().equals("Tài khoản")) {
-                    txtUsername.setText("");
-                    txtUsername.setForeground(Color.BLACK); // Chữ đen khi gõ
-                }
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                // Khi click ra chỗ khác, nếu ô trống thì hiện lại chữ mờ
-                if (txtUsername.getText().isEmpty()) {
-                    txtUsername.setForeground(Color.GRAY);
-                    txtUsername.setText("Tài khoản");
-                }
-            }
-        });
 
-        // 2. Khởi tạo ô Mật khẩu
-        JPasswordField txtPassword = new JPasswordField("Mật khẩu");
-        txtPassword.setForeground(Color.GRAY);
-        txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtPassword.setEchoChar((char) 0); // Hiện chữ "Mật khẩu" rõ ràng (không bị mã hóa thành dấu *)
+        // ===== BÊN PHẢI (FORM) =====
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(60,60,60,60));
+        rightPanel.setBackground(Color.WHITE);
 
-        // Thêm sự kiện click chuột cho ô Mật khẩu
-        txtPassword.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                String pass = new String(txtPassword.getPassword());
-                if (pass.equals("Mật khẩu")) {
-                    txtPassword.setText("");
-                    txtPassword.setForeground(Color.BLACK);
-                    txtPassword.setEchoChar('•'); // Bật lại chế độ mã hóa bằng dấu chấm tròn
-                }
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                String pass = new String(txtPassword.getPassword());
-                if (pass.isEmpty()) {
-                    txtPassword.setForeground(Color.GRAY);
-                    txtPassword.setText("Mật khẩu");
-                    txtPassword.setEchoChar((char) 0); // Tắt mã hóa để hiện lại chữ "Mật khẩu"
-                }
-            }
-        });
+        JLabel title = new JLabel("Đăng nhập");
+        title.setFont(new Font("Arial", Font.BOLD, 26));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        panelInputs.add(txtUsername);
-        panelInputs.add(txtPassword);
+        JTextField txtUsername = new JTextField();
+        txtUsername.setMaximumSize(new Dimension(300,35));
+        txtUsername.setBorder(BorderFactory.createTitledBorder("Username"));
+        txtUsername.setMaximumSize(
+                new Dimension(Integer.MAX_VALUE,35)
+        );
 
-        // NÚT ĐĂNG NHẬP
-        JPanel panelBtn = new JPanel(new BorderLayout());
-        JButton btnLogin = new JButton("Đăng Nhập");
-        btnLogin.setBackground(new Color(0, 123, 255));
+        JPasswordField txtPassword = new JPasswordField();
+        txtPassword.setMaximumSize(new Dimension(300,35));
+        txtPassword.setBorder(BorderFactory.createTitledBorder("Password"));
+        txtPassword.setMaximumSize(
+                new Dimension(Integer.MAX_VALUE,35)
+        );
+
+        JButton btnLogin = new JButton("Đăng nhập");
+        btnLogin.setBackground(new Color(24,119,242));
         btnLogin.setForeground(Color.WHITE);
-        btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
-        panelBtn.add(btnLogin, BorderLayout.CENTER);
+        btnLogin.setFocusPainted(false);
+        btnLogin.setMaximumSize(
+                new Dimension(Integer.MAX_VALUE,35)
+        );
+        btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // LINK ĐĂNG KÝ
-        JPanel panelRegister = new JPanel();
-        JLabel lblRegister = new JLabel("<html>Bạn chưa có tài khoản? <font color='blue'><u>Đăng ký ngay</u></font></html>");
-        lblRegister.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lblRegister.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                loginFrame.dispose();
-                showRegisterScreen();
-            }
-        });
-        panelRegister.add(lblRegister);
+        JLabel goRegister =
+                new JLabel("Chưa có tài khoản? Đăng ký");
+        goRegister.setForeground(Color.GRAY);
+        goRegister.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        goRegister.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        mainPanel.add(panelTitle);
-        mainPanel.add(panelInputs);
-        mainPanel.add(panelBtn);
-        mainPanel.add(panelRegister);
+        goRegister.addMouseListener(
+                new java.awt.event.MouseAdapter(){
+                    public void mouseClicked(
+                            java.awt.event.MouseEvent evt){
 
-        loginFrame.add(mainPanel, BorderLayout.CENTER);
+                        loginFrame.dispose();
+                        showRegisterScreen();
 
-        // Xử lý chặn lỗi khi người dùng bấm Đăng nhập nhưng chưa nhập gì
+                    }
+                });
+
         btnLogin.addActionListener(e -> {
+
             String username = txtUsername.getText();
-            String password = new String(txtPassword.getPassword());
+            String password =
+                    new String(txtPassword.getPassword());
 
-            if (username.equals("Tài khoản") || password.equals("Mật khẩu") || username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(loginFrame, "Vui lòng nhập đầy đủ Tài khoản và Mật khẩu!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+            if(authenticateUser(username,password)){
 
-            if (authenticateUser(username, password)) {
                 loginFrame.dispose();
                 showMainScreen();
-            } else {
-                JOptionPane.showMessageDialog(loginFrame, "Sai tài khoản hoặc mật khẩu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+
             }
+            else{
+
+                JOptionPane.showMessageDialog(
+                        loginFrame,
+                        "Sai tài khoản"
+                );
+
+            }
+
         });
 
-        // Đưa con trỏ chuột ra khỏi ô text lúc vừa mở phần mềm để tránh mất chữ mờ
-        mainPanel.requestFocusInWindow();
+        rightPanel.add(title);
+        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(txtUsername);
+        rightPanel.add(Box.createVerticalStrut(10));
+        rightPanel.add(txtPassword);
+        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(btnLogin);
+        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(goRegister);
+
+        loginFrame.add(leftPanel);
+        loginFrame.add(rightPanel);
+
         loginFrame.setVisible(true);
     }
 
@@ -170,123 +167,113 @@ public class MainApp {
         }
     }
 
-    // MÀN HÌNH ĐĂNG KÝ
-    private static void showRegisterScreen() {
-        JFrame regFrame = new JFrame("Đăng ký - Mạng Xã Hội");
-        regFrame.setSize(400, 300); // Kích thước y hệt form đăng nhập
-        regFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private static void showRegisterScreen(){
+
+        JFrame regFrame = new JFrame("Register");
+        regFrame.setSize(800,450);
         regFrame.setLocationRelativeTo(null);
-        regFrame.setLayout(new BorderLayout());
+        regFrame.setLayout(new GridLayout(1,2));
 
-        JPanel mainPanel = new JPanel(new GridLayout(4, 1, 0, 15));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+        // trái
+        JPanel leftPanel = new JPanel();
+        leftPanel.setBackground(new Color(40,167,69));
+        leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.Y_AXIS));
 
-        // TIÊU ĐỀ
-        JPanel panelTitle = new JPanel();
-        JLabel labelDangKy = new JLabel("ĐĂNG KÝ");
-        labelDangKy.setFont(new Font("Arial", Font.BOLD, 24));
-        labelDangKy.setForeground(new Color(40, 167, 69)); // Màu xanh lá cây cho Đăng ký
-        panelTitle.add(labelDangKy);
+        JLabel icon = new JLabel("JOIN US");
+        icon.setFont(new Font("Arial",Font.BOLD,40));
+        icon.setForeground(Color.WHITE);
+        icon.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // TÀI KHOẢN & MẬT KHẨU (PLACEHOLDER)
-        JPanel panelInputs = new JPanel(new GridLayout(2, 1, 0, 8));
+        JLabel sub = new JLabel("Create account now");
+        sub.setForeground(Color.WHITE);
+        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 1. Khởi tạo ô Tài khoản mới
-        JTextField txtUsername = new JTextField("Tài khoản mới");
-        txtUsername.setForeground(Color.GRAY);
-        txtUsername.setFont(new Font("Arial", Font.PLAIN, 14));
+        leftPanel.add(Box.createVerticalGlue());
+        leftPanel.add(icon);
+        leftPanel.add(Box.createVerticalStrut(10));
+        leftPanel.add(sub);
+        leftPanel.add(Box.createVerticalGlue());
 
-        txtUsername.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                if (txtUsername.getText().equals("Tài khoản mới")) {
-                    txtUsername.setText("");
-                    txtUsername.setForeground(Color.BLACK);
-                }
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                if (txtUsername.getText().isEmpty()) {
-                    txtUsername.setForeground(Color.GRAY);
-                    txtUsername.setText("Tài khoản mới");
-                }
-            }
-        });
+        // phải
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel,BoxLayout.Y_AXIS));
+        rightPanel.setBorder(
+                BorderFactory.createEmptyBorder(60,60,60,60)
+        );
+        rightPanel.setBackground(Color.WHITE);
 
-        // 2. Khởi tạo ô Mật khẩu
-        JPasswordField txtPassword = new JPasswordField("Mật khẩu");
-        txtPassword.setForeground(Color.GRAY);
-        txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtPassword.setEchoChar((char) 0);
+        JLabel title = new JLabel("Đăng ký");
+        title.setFont(new Font("Arial",Font.BOLD,26));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        txtPassword.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                String pass = new String(txtPassword.getPassword());
-                if (pass.equals("Mật khẩu")) {
-                    txtPassword.setText("");
-                    txtPassword.setForeground(Color.BLACK);
-                    txtPassword.setEchoChar('•');
-                }
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                String pass = new String(txtPassword.getPassword());
-                if (pass.isEmpty()) {
-                    txtPassword.setForeground(Color.GRAY);
-                    txtPassword.setText("Mật khẩu");
-                    txtPassword.setEchoChar((char) 0);
-                }
-            }
-        });
+        JTextField txtUsername = new JTextField();
+        txtUsername.setMaximumSize(new Dimension(300,35));
+        txtUsername.setBorder(
+                BorderFactory.createTitledBorder("Username"));
+        txtUsername.setMaximumSize(
+                new Dimension(Integer.MAX_VALUE,35));
 
-        panelInputs.add(txtUsername);
-        panelInputs.add(txtPassword);
+        JPasswordField txtPassword = new JPasswordField();
+        txtPassword.setMaximumSize(new Dimension(300,35));
+        txtPassword.setBorder(
+                BorderFactory.createTitledBorder("Password"));
+        txtPassword.setMaximumSize(
+                new Dimension(Integer.MAX_VALUE,35));
 
-        // NÚT ĐĂNG KÝ
-        JPanel panelBtn = new JPanel(new BorderLayout());
-        JButton btnRegister = new JButton("Đăng Ký");
-        btnRegister.setBackground(new Color(40, 167, 69)); // Màu xanh lá cây
+        JButton btnRegister = new JButton("Tạo tài khoản");
+        btnRegister.setBackground(new Color(40,167,69));
         btnRegister.setForeground(Color.WHITE);
-        btnRegister.setFont(new Font("Arial", Font.BOLD, 14));
-        panelBtn.add(btnRegister, BorderLayout.CENTER);
+        btnRegister.setFocusPainted(false);
+        btnRegister.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        btnRegister.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // LINK ĐĂNG NHẬP
-        JPanel panelLogin = new JPanel();
-        JLabel lblLogin = new JLabel("<html>Bạn đã có tài khoản? <font color='blue'><u>Đăng nhập ngay</u></font></html>");
-        lblLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lblLogin.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                regFrame.dispose();
-                showLoginScreen(); // Trở về màn hình đăng nhập
-            }
-        });
-        panelLogin.add(lblLogin);
+        JLabel goLogin =
+                new JLabel("Đã có tài khoản? Đăng nhập");
+        goLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        goLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        mainPanel.add(panelTitle);
-        mainPanel.add(panelInputs);
-        mainPanel.add(panelBtn);
-        mainPanel.add(panelLogin);
+        goLogin.addMouseListener(
+                new java.awt.event.MouseAdapter(){
 
-        regFrame.add(mainPanel, BorderLayout.CENTER);
+                    public void mouseClicked(
+                            java.awt.event.MouseEvent evt){
 
-        // --- LOGIC XỬ LÝ ĐĂNG KÝ ---
+                        regFrame.dispose();
+                        showLoginScreen();
+
+                    }
+                });
+
         btnRegister.addActionListener(e -> {
-            String username = txtUsername.getText();
-            String password = new String(txtPassword.getPassword());
 
-            // Kiểm tra xem người dùng đã gõ thật chưa, hay vẫn để nguyên chữ mờ
-            if (username.equals("Tài khoản mới") || password.equals("Mật khẩu") || username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(regFrame, "Vui lòng nhập đầy đủ thông tin!", "Lỗi", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+            if(registerNewUser(
+                    txtUsername.getText(),
+                    new String(txtPassword.getPassword()))){
 
-            if (registerNewUser(username, password)) {
-                JOptionPane.showMessageDialog(regFrame, "Đăng ký thành công! Hãy đăng nhập lại.");
+                JOptionPane.showMessageDialog(
+                        regFrame,
+                        "Tạo tài khoản thành công"
+                );
+
                 regFrame.dispose();
-                showLoginScreen(); // Tạo xong thì tự động đẩy về form Đăng nhập
-            } else {
-                JOptionPane.showMessageDialog(regFrame, "Tên tài khoản đã tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                showLoginScreen();
             }
+
         });
 
-        mainPanel.requestFocusInWindow();
+        rightPanel.add(title);
+        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(txtUsername);
+        rightPanel.add(Box.createVerticalStrut(10));
+        rightPanel.add(txtPassword);
+        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(btnRegister);
+        rightPanel.add(Box.createVerticalStrut(20));
+        rightPanel.add(goLogin);
+
+        regFrame.add(leftPanel);
+        regFrame.add(rightPanel);
+
         regFrame.setVisible(true);
     }
 
@@ -325,16 +312,15 @@ public class MainApp {
 
     // MÀN HÌNH CHÍNH (POST & FEED)
     private static void showMainScreen() {
-        mainFrame = new JFrame("Mạng Xã Hội Demo");
-        mainFrame.setSize(550, 700);
+        mainFrame = new JFrame("Mạng Xã Hội");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setLayout(new BorderLayout(10, 10));
-
         mainFrame.getContentPane().setBackground(new Color(240, 242, 245));
 
         // --- 1. Thanh Header ---
         JPanel headerPanel = new JPanel(new BorderLayout());
+        JPanel followPanel = createFollowPanel();
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
@@ -342,7 +328,7 @@ public class MainApp {
         String currentUsername = session.get(User.class, currentUserId).getUsername();
         session.close();
 
-        JLabel lblWelcome = new JLabel("👋 Chào mừng, " + currentUsername + "!");
+        JLabel lblWelcome = new JLabel("👋 Xin chào, " + currentUsername + "!");
         lblWelcome.setFont(new Font("Arial", Font.BOLD, 16));
 
         JButton btnLogout = new JButton("Đăng Xuất");
@@ -408,6 +394,7 @@ public class MainApp {
 
         mainFrame.add(headerPanel, BorderLayout.NORTH);
         mainFrame.add(centerPanel, BorderLayout.CENTER);
+        mainFrame.add(followPanel, BorderLayout.EAST);
 
         loadFeed();
         mainFrame.setVisible(true);
@@ -464,6 +451,58 @@ public class MainApp {
 
         card.add(header, BorderLayout.NORTH);
         card.add(content, BorderLayout.CENTER);
+
+        // nếu bài viết không phải của mình thì hiện nút follow
+        if (!p.getUser().getId().equals(currentUserId)) {
+
+            Session session = sessionFactory.openSession();
+
+            User me = session.get(User.class, currentUserId);
+
+            boolean isFollowing =
+                    me.getFollowing()
+                            .stream()
+                            .anyMatch(u -> u.getId().equals(p.getUser().getId()));
+
+            session.close();
+
+            JButton btnFollow = new JButton(
+                    isFollowing ? "Following" : "Follow"
+            );
+
+            btnFollow.setBackground(
+                    isFollowing ? new Color(230, 230, 230)
+                            : new Color(24, 119, 242)
+            );
+
+            btnFollow.setForeground(
+                    isFollowing ? Color.BLACK : Color.WHITE
+            );
+
+            btnFollow.addActionListener(e -> {
+
+                if (isFollowing) {
+
+                    unfollowUser(p.getUser().getId());
+
+                } else {
+
+                    followUser(p.getUser().getId());
+
+                }
+
+                loadFeed();
+            });
+
+            JPanel bottomPanel =
+                    new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+            bottomPanel.setBackground(Color.WHITE);
+
+            bottomPanel.add(btnFollow);
+
+            card.add(bottomPanel, BorderLayout.SOUTH);
+        }
 
         return card;
     }
@@ -537,4 +576,176 @@ public class MainApp {
             session.close();
         }
     }
+
+    private static void unfollowUser(Integer userId) {
+
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+
+        try {
+
+            User me = session.get(User.class, currentUserId);
+            User target = session.get(User.class, userId);
+
+            me.getFollowing().remove(target);
+
+            session.merge(me);
+
+            tx.commit();
+
+            loadFeed();
+            loadFollows(followPanel); // reload danh sách follow
+
+        } catch (Exception e) {
+
+            tx.rollback();
+            e.printStackTrace();
+
+        } finally {
+
+            session.close();
+
+        }
+    }
+
+    private static void followUser(Integer userId) {
+
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+
+        try {
+
+            User me = session.get(User.class, currentUserId);
+            User target = session.get(User.class, userId);
+
+            if (!me.getFollowing().contains(target)) {
+
+                me.getFollowing().add(target);
+
+                session.merge(me);
+
+                tx.commit();
+
+                loadFeed();
+                loadFollows(followPanel); // reload danh sách follow
+
+            }
+
+        } catch (Exception e) {
+
+            tx.rollback();
+            e.printStackTrace();
+
+        } finally {
+
+            session.close();
+
+        }
+    }
+
+    private static void loadFollows(JPanel followPanel) {
+
+        Session session = sessionFactory.openSession();
+
+        try {
+
+            User me = session.get(User.class, currentUserId);
+
+            followPanel.removeAll();
+
+            if (me.getFollowing() == null || me.getFollowing().isEmpty()) {
+
+                JLabel lbl = new JLabel("Chưa follow ai");
+                lbl.setFont(new Font("Arial", Font.ITALIC, 13));
+                lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                followPanel.add(lbl);
+
+            } else {
+
+                for (User u : me.getFollowing()) {
+
+                    JPanel item = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
+                    item.setMaximumSize(new Dimension(160, 35));
+                    item.setBackground(Color.WHITE);
+
+                    // avatar
+                    String firstLetter =
+                            u.getUsername().substring(0, 1).toUpperCase();
+
+                    JLabel avatar = new JLabel(firstLetter);
+                    avatar.setOpaque(true);
+                    avatar.setHorizontalAlignment(SwingConstants.CENTER);
+                    avatar.setPreferredSize(new Dimension(28, 28));
+
+                    avatar.setBackground(new Color(24, 119, 242));
+                    avatar.setForeground(Color.WHITE);
+
+                    avatar.setFont(new Font("Arial", Font.BOLD, 13));
+
+                    // tên
+                    JLabel name =
+                            new JLabel(u.getUsername());
+
+                    name.setFont(new Font("Arial", Font.PLAIN, 13));
+
+                    // nút unfollow
+                    JButton btnUnfollow =
+                            new JButton("Unfollow");
+
+                    btnUnfollow.setFont(
+                            new Font("Arial", Font.PLAIN, 11));
+
+                    btnUnfollow.setMargin(
+                            new Insets(2, 6, 2, 6));
+
+                    btnUnfollow.addActionListener(e -> {
+
+                        unfollowUser(u.getId());
+
+                        loadFollows(followPanel);
+
+                    });
+
+                    item.add(avatar);
+                    item.add(name);
+                    item.add(btnUnfollow);
+
+                    followPanel.add(item);
+                }
+            }
+
+            followPanel.revalidate();
+            followPanel.repaint();
+
+        } finally {
+
+            session.close();
+
+        }
+    }
+
+    private static JPanel createFollowPanel() {
+
+        followPanel = new JPanel();
+
+        followPanel.setLayout(
+                new BoxLayout(followPanel, BoxLayout.Y_AXIS)
+        );
+
+        followPanel.setBackground(Color.WHITE);
+
+        followPanel.setBorder(
+                BorderFactory.createTitledBorder("Follows")
+        );
+
+        followPanel.setPreferredSize(
+                new Dimension(180, 0)
+        );
+
+        loadFollows(followPanel);
+
+        return followPanel;
+    }
+
 }
